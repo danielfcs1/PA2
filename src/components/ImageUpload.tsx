@@ -6,26 +6,51 @@ const ImageUpload: React.FC<ImageUploadProps> = ({ onSubmit }) => {
   const [invert, setInvert] = useState(false);
   const [preview, setPreview] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [dimensions, setDimensions] = useState<{ width: number; height: number } | null>(null);
 
+  // ✅ Verificar dimensiones antes de aceptar la imagen
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) {
-      setImage(file);
-      setPreview(URL.createObjectURL(file));
-      setError(null);
-    }
+    if (!file) return;
+
+    const img = new Image();
+    const reader = new FileReader();
+
+    reader.onload = (event) => {
+      img.src = event.target?.result as string;
+    };
+
+    img.onload = () => {
+      const width = img.width;
+      const height = img.height;
+      setDimensions({ width, height });
+
+      if (width !== 28 || height !== 28) {
+        setError(`❌ La imagen debe tener exactamente 28x28 píxeles. (Actual: ${width}x${height})`);
+        setImage(null);
+        setPreview(null);
+      } else {
+        setError(null);
+        setImage(file);
+        setPreview(URL.createObjectURL(file));
+      }
+    };
+
+    reader.readAsDataURL(file);
   };
 
+  // ✅ Solo enviar si cumple con los requisitos
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!image) {
-      setError("Por favor selecciona una imagen antes de enviar.");
+      setError("Por favor selecciona una imagen válida de 28x28 antes de enviar.");
       return;
     }
 
     const formData = new FormData();
     formData.append("invert", invert.toString());
     formData.append("image", image);
+
     onSubmit(formData);
   };
 
@@ -40,6 +65,12 @@ const ImageUpload: React.FC<ImageUploadProps> = ({ onSubmit }) => {
         onChange={handleImageChange}
         className="border border-gray-300 p-2 sm:p-3 rounded-lg w-full text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
       />
+
+      {dimensions && (
+        <p className="text-gray-600 text-center text-xs">
+          Dimensiones detectadas: {dimensions.width}x{dimensions.height}px
+        </p>
+      )}
 
       <label className="flex items-center gap-2 text-gray-700">
         <input
@@ -67,7 +98,8 @@ const ImageUpload: React.FC<ImageUploadProps> = ({ onSubmit }) => {
 
       <button
         type="submit"
-        className="bg-blue-600 text-white font-semibold py-2 sm:py-3 rounded-lg hover:bg-blue-700 transition active:scale-95"
+        className="bg-blue-600 text-white font-semibold py-2 sm:py-3 rounded-lg hover:bg-blue-700 transition active:scale-95 disabled:opacity-60 disabled:cursor-not-allowed"
+        disabled={!image || !!error}
       >
         Enviar imagen
       </button>

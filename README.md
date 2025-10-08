@@ -71,3 +71,14 @@ export default defineConfig([
   },
 ])
 ```
+## 🎨 Créditos de diseño
+
+Este proyecto utiliza componentes de interfaz de usuario proporcionados por Tailwind UI.
+
+> Tailwind Labs. *Tailwind CSS Hero Sections - Official Tailwind UI Components*. Disponible en: [https://tailwindcss.com/plus/ui-blocks/marketing/sections/heroes#component-b9bcab4538776a17fff93d18f82a8272-dark](https://tailwindcss.com/plus/ui-blocks/marketing/sections/heroes#component-b9bcab4538776a17fff93d18f82a8272-dark)
+
+## 📚 Referencias
+
+Este proyecto utiliza el conjunto de datos MNIST para el reconocimiento de dígitos manuscritos.
+
+> LeCun, Yann; Cortes, Corinna; Burges, CJ. (2010). *MNIST handwritten digit database*. ATT Labs [Online]. Disponible en: [http://yann.lecun.com/exdb/mnist](http://yann.lecun.com/exdb/mnist)
